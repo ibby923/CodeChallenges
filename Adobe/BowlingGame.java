@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 
 
 public class BowlingGame {
@@ -49,10 +48,11 @@ public static void main(String [] args) {
 	
 	game.roll(10);
 	
-	game.roll(10);
+	game.roll(1);
 	
 	game.roll(9);
-	game.roll(1);
+	
+	game.roll(10);
 
 	game.getScore();
 	game.printBalls();
@@ -83,13 +83,12 @@ public void roll(int knocked) {
 		}
 		//If the last frame was a Strike then two bonus shots will be alloted
 		else if(type.equals("Strike")){
-			addValueToFrameList("Extras",""+knocked,false);
+			addValueToFrameList("Extras",""+knocked,false,0,false);
 			extraRolls++;
 		}
 		//If the last frame was a sparse, I am not sure about this rule, add only one shot and exit
 		else {
-			addValueToFrameList("Extras",""+knocked,false);
-			frameNumber++;
+			addValueToFrameList("Extras",""+knocked,false,0,false);
 			extraRolls += 2;
 		}
 	}
@@ -100,9 +99,7 @@ public void roll(int knocked) {
 		//Two possibilities, if a strike is rolled or not AND if it is 1st or 2nd roll
 		if( knocked == 10) {
 			if( rollNumber % 2 == 1) {
-				addValueToFrameList("Strike",""+knocked,false);
-				frameScore = 0;
-				frameNumber++;
+				addValueToFrameList("Strike",""+knocked,false,0,true);
 				rollNumber--;
 			}
 			
@@ -115,15 +112,12 @@ public void roll(int knocked) {
 				}
 			
 				else if(knocked+frameScore==10){
-					addValueToFrameList("Spare",frameScore+","+knocked,true);
-					frameScore = 0;
-					frameNumber++;
+					addValueToFrameList("Spare",frameScore+","+knocked,true,0,true);
 				}
 				
 				else {
-					addValueToFrameList("Open",frameScore+","+knocked,false);
-					frameNumber++;
-					frameScore =0 ;
+					addValueToFrameList("Open",frameScore+","+knocked,false,0,true);
+				
 				}
 			}
 		}
@@ -131,7 +125,7 @@ public void roll(int knocked) {
 			
 			if(rollNumber % 2 == 1) {
 				frameScore += knocked;
-				addValueToFrameList("In Progress",""+knocked,false);
+				addValueToFrameList("In Progress",""+knocked,false,frameScore,false);
 			}
 			else {
 				if(knocked+frameScore > 10) {
@@ -139,15 +133,11 @@ public void roll(int knocked) {
 					rollNumber--;
 				}
 				else if(knocked+frameScore == 10) {
-					addValueToFrameList("Sparse",frameScore+","+knocked,true);
-					frameScore = 0;
-					frameNumber++;
+					addValueToFrameList("Sparse",frameScore+","+knocked,true,0, true);
 				}
 				
 				else {
-					addValueToFrameList("Open",frameScore+","+knocked,true);
-					frameScore = 0;
-					frameNumber++;
+					addValueToFrameList("Open",frameScore+","+knocked,true,0, true);
 				}
 			
 			}
@@ -167,12 +157,16 @@ public int getScore() {
 }
 
 
-public void addValueToFrameList(String type,String score,boolean removeLast) {
+public void addValueToFrameList(String type,String score,boolean removeLast,int frameScore,boolean incrementframeNumber) {
 	myMap = new HashMap<String,String>();
 	myMap.put(type,score);
 	if(removeLast == true) {
 		FrameList.remove(FrameList.size()-1);
 	}
+	if(incrementframeNumber == true) {
+		frameNumber++;
+	}
+	this.frameScore = frameScore; 
 	FrameList.add(myMap);
 }
 
