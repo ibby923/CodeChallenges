@@ -34,10 +34,11 @@ public class BowlingGame {
 
 	public static void main(String [] args) {
 		BowlingGame game = new BowlingGame();
+		game.roll(5);
+		game.roll(6);
+		game.roll(10);
 		game.roll(9);
-		game.isFinished();
 		game.printBalls();
-		System.out.println(game.getScore());
 	}
 
 	//Takes an integer as input, number of pins knocked out by roll and updates the data structure
@@ -81,7 +82,7 @@ public class BowlingGame {
 		else {
 			//Increment roll numbers, to check number of rolls per frame
 			rollNumber++;
-			//Two possibilities, if a strike is rolled or not AND if it is 1st or 2nd roll
+			//Two possibilities, if a (strike is rolled or not) AND (if it is 1st or 2nd roll in frame)
 			if( knocked == 10) {
 				if( rollNumber % 2 == 1) {
 					addValueToFrameList("Strike",""+knocked,false,0,true);
@@ -142,31 +143,29 @@ public class BowlingGame {
 	public int getScore() {
 		score = 0;
 		int FrameSize = FrameList.size();
-	
-		//System.out.println(FrameSize);
 		for(int i = 0; i < FrameSize; i++) {	
 			String Type = (FrameList.get(i).entrySet().iterator().next().getKey());
-			//System.out.println(type);
+			//If the hit is a strike then add the next two scores
 			if(Type.equals("Strike")) {
 				score += 10;
 				if(i+1 < FrameSize) {
 					String secondType = (FrameList.get(i+1).entrySet().iterator().next().getKey());
 					//System.out.println(secondType);
 					if(secondType.equals("In Progress")) {
-						String numby = (FrameList.get(i+1).entrySet().iterator().next().getValue());
-						score += Integer.parseInt(numby);
+						String secondScore = (FrameList.get(i+1).entrySet().iterator().next().getValue());
+						score += Integer.parseInt(secondScore);
 					}
 					else if(secondType.equals("Spare") || secondType.equals("Open")) {
-						String numby = (FrameList.get(i+1).entrySet().iterator().next().getValue());
-						score += (Integer.parseInt(numby.split(",")[0])+Integer.parseInt(numby.split(",")[1]));
+						String secondScore = (FrameList.get(i+1).entrySet().iterator().next().getValue());
+						score += (Integer.parseInt(secondScore.split(",")[0])+Integer.parseInt(secondScore.split(",")[1]));
 						continue;
 					}
 					else if(secondType.equals("Strike")){
 						score += 10;
 						if(i+2 < FrameSize) {
-							String thirdType = (FrameList.get(i+2).entrySet().iterator().next().getValue());
-							if(thirdType.equals("Strike")) score += 10;
-							else score += (Integer.parseInt(thirdType.split(",")[0]));
+							String thirdScore = (FrameList.get(i+2).entrySet().iterator().next().getValue());
+							if(thirdScore.equals("Strike")) score += 10;
+							else score += (Integer.parseInt(thirdScore.split(",")[0]));
 						}
 					}
 					else {
@@ -176,29 +175,30 @@ public class BowlingGame {
 				}
 			}
 		
-		
+			//If the frame is in progress means the game is not over yet
 			else if(Type.equals("In Progress")) {
-				String numby = (FrameList.get(i).entrySet().iterator().next().getValue());
-				score+= Integer.parseInt(numby.split(",")[0]);
+				String firstScore = (FrameList.get(i).entrySet().iterator().next().getValue());
+				score+= Integer.parseInt(firstScore.split(",")[0]);
 			}
 		
-		
+			//If it is a spare then add the next frame first roll
 			else if(Type.equals("Spare")) {
-				String numby = (FrameList.get(i).entrySet().iterator().next().getValue());
-				score += (Integer.parseInt(numby.split(",")[0])+Integer.parseInt(numby.split(",")[1]));
+				String firstScore = (FrameList.get(i).entrySet().iterator().next().getValue());
+				score += (Integer.parseInt(firstScore.split(",")[0])+Integer.parseInt(firstScore.split(",")[1]));
 				if(i+1 < FrameSize) {
-					String othy = (FrameList.get(i+1).entrySet().iterator().next().getKey());
-					if(othy.equals("Strike")) score += 10;
+					String secondScore = (FrameList.get(i+1).entrySet().iterator().next().getKey());
+					if(secondScore.equals("Strike")) score += 10;
 					else {
-						String lastnumby = (FrameList.get(i+1).entrySet().iterator().next().getValue());
-						score += Integer.parseInt(lastnumby.split(",")[0]);
+						String lastNumber = (FrameList.get(i+1).entrySet().iterator().next().getValue());
+						score += Integer.parseInt(lastNumber.split(",")[0]);
 					}
 				}
 			}
 		
+			//If it is open just add the current frame score
 			else if(Type.equals("Open")){
-				String numby = FrameList.get(i).entrySet().iterator().next().getValue();
-				score += (Integer.parseInt(numby.split(",")[0])+Integer.parseInt(numby.split(",")[1]));
+				String firstScore = FrameList.get(i).entrySet().iterator().next().getValue();
+				score += (Integer.parseInt(firstScore.split(",")[0])+Integer.parseInt(firstScore.split(",")[1]));
 			}
 		
 			else {
