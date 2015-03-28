@@ -11,7 +11,7 @@ public class BowlingGame {
 	private int extraRolls = 0;
 
 	/*There has to be a better way to store this...Each Index of the List is the Frame Number
-	Each map in the index can have 4 keys => 
+	Each map in the index can have 4 keys =
 	Strike - 10 pins knocked out in one roll
 	Spare - 2 rolls in one frame that add up to 10
 	Open - 2 rolls in a frame that do not add up to 10
